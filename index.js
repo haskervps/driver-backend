@@ -34,7 +34,16 @@ const bookingSchema = new mongoose.Schema({
   
   const Booking = mongoose.model('Booking', bookingSchema);
   
-// Routes
+// Driver schema
+const driverSchema = new mongoose.Schema({
+    username: String,
+    password: String, // For now, store in plain text (can hash later)
+  });
+  const Driver = mongoose.model('Driver', driverSchema);
+
+
+  
+  // Routes
 app.get('/', (req, res) => {
   res.send('Driver backend running');
 });
@@ -96,6 +105,23 @@ app.get('/seed-bookings', async (req, res) => {
       res.status(500).json({ error: 'Failed to fetch bookings' });
     }
   });
+
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    const driver = await Driver.findOne({ username, password });
+
+    if (!driver) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    res.json({ message: 'Login successful', username: driver.username });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
   
 
 // Start server
