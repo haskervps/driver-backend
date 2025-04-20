@@ -23,7 +23,17 @@ const attendanceSchema = new mongoose.Schema({
   time: String,
 });
 const Attendance = mongoose.model('Attendance', attendanceSchema);
-
+// Booking schema
+const bookingSchema = new mongoose.Schema({
+    customer: String,
+    pickup: String,
+    drop: String,
+    time: String,
+    status: String,
+  });
+  
+  const Booking = mongoose.model('Booking', bookingSchema);
+  
 // Routes
 app.get('/', (req, res) => {
   res.send('Driver backend running');
@@ -44,6 +54,49 @@ app.post('/mark-attendance', async (req, res) => {
   }
 });
 
+app.get('/seed-bookings', async (req, res) => {
+    const sampleBookings = [
+      {
+        customer: 'John Doe',
+        pickup: 'Location A',
+        drop: 'Location B',
+        time: '10:00 AM',
+        status: 'Assigned',
+      },
+      {
+        customer: 'Jane Smith',
+        pickup: 'Location C',
+        drop: 'Location D',
+        time: '12:30 PM',
+        status: 'Assigned',
+      },
+      {
+        customer: 'Ali Khan',
+        pickup: 'Location E',
+        drop: 'Location F',
+        time: '2:45 PM',
+        status: 'Assigned',
+      },
+    ];
+  
+    try {
+      await Booking.insertMany(sampleBookings);
+      res.send('✅ Sample bookings added to MongoDB!');
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('❌ Failed to insert sample bookings.');
+    }
+  });
+
+  app.get('/bookings', async (req, res) => {
+    try {
+      const bookings = await Booking.find();
+      res.json(bookings);
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to fetch bookings' });
+    }
+  });
+  
 
 // Start server
 const PORT = 3000;
