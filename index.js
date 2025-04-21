@@ -30,6 +30,7 @@ const bookingSchema = new mongoose.Schema({
   drop: String,
   time: String,
   status: String,
+  driverUsername: String,
 });
 const Booking = mongoose.model('Booking', bookingSchema);
 
@@ -69,6 +70,16 @@ app.get('/bookings', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch bookings' });
   }
 });
+app.get('/bookings/:username', async (req, res) => {
+    const { username } = req.params;
+    try {
+      const bookings = await Booking.find({ driverUsername: username });
+      res.json(bookings);
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to fetch driver bookings' });
+    }
+  });
+  
 
 // Update booking status
 app.put('/bookings/:id', async (req, res) => {
@@ -111,29 +122,33 @@ app.post('/login', async (req, res) => {
 
 // Seed sample bookings
 app.get('/seed-bookings', async (req, res) => {
-  const sampleBookings = [
-    {
-      customer: 'John Doe',
-      pickup: 'Location A',
-      drop: 'Location B',
-      time: '10:00 AM',
-      status: 'Assigned',
-    },
-    {
-      customer: 'Jane Smith',
-      pickup: 'Location C',
-      drop: 'Location D',
-      time: '12:30 PM',
-      status: 'Assigned',
-    },
-    {
-      customer: 'Ali Khan',
-      pickup: 'Location E',
-      drop: 'Location F',
-      time: '2:45 PM',
-      status: 'Assigned',
-    },
-  ];
+    const sampleBookings = [
+        {
+          customer: 'John Doe',
+          pickup: 'Location A',
+          drop: 'Location B',
+          time: '10:00 AM',
+          status: 'Assigned',
+          driverUsername: 'driver1',
+        },
+        {
+          customer: 'Jane Smith',
+          pickup: 'Location C',
+          drop: 'Location D',
+          time: '12:30 PM',
+          status: 'Assigned',
+          driverUsername: 'driver1',
+        },
+        {
+          customer: 'Ali Khan',
+          pickup: 'Location E',
+          drop: 'Location F',
+          time: '2:45 PM',
+          status: 'Assigned',
+          driverUsername: 'driver2',
+        },
+      ];
+      
 
   try {
     await Booking.insertMany(sampleBookings);
