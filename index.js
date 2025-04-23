@@ -79,7 +79,14 @@ app.get('/bookings/:username', async (req, res) => {
       res.status(500).json({ error: 'Failed to fetch driver bookings' });
     }
   });
-  
+app.get('/drivers', async (req, res) => {
+    try {
+      const drivers = await Driver.find();
+      res.json(drivers);
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to fetch drivers' });
+    }
+  });  
 
 // Update booking status
 app.put('/bookings/:id', async (req, res) => {
