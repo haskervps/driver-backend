@@ -184,3 +184,14 @@ const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
+app.post('/bookings', async (req, res) => {
+    try {
+      const booking = new Booking(req.body);
+      await booking.save();
+      res.status(201).json({ message: 'Booking created' });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Failed to create booking' });
+    }
+  });
+  
